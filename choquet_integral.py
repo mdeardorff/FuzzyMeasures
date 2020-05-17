@@ -1,4 +1,5 @@
 import numpy as np
+import math
 import itertools
 from cvxopt import solvers, matrix
 
@@ -179,6 +180,28 @@ class ChoquetIntegral:
                 Lattice[str(latt_pt)] = count
                 count = count + 1
         return Lattice
+    
+    def generate_walk_diffs(self):
+        n = self.N
+        initial = []
+        for i in range(n):
+            initial.append(i+1)
+
+        index_permutations = itertools.permutations(initial,4)
+        walks = np.ndarray((math.factorial(n),n),dtype=int)
+        walk_diffs = np.ndarray((math.factorial(n),n),dtype=float)
+        for i,val in enumerate(index_permutations):
+            walks[i] = np.asarray(val)
+
+            c_build = np.ndarray(n)
+            for j in range(len(walks[i])):
+                if j == 0:
+                    c_build[j] = self.fm[str(walks[i][0:1])]
+                else:
+                    c_build[j] = (self.fm[str(np.sort(walks[i][0:j+1]))]) - (self.fm[str(np.sort(walks[i][0:j]))])
+
+            walk_diffs[i] = c_build
+        return walk_diffs
 
 
 if __name__ == '__main__':
