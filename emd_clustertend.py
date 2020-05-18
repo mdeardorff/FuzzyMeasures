@@ -24,7 +24,7 @@ def emd_pairwise_dissimilarity(X):
 
 
 
-def vat(data, return_odm=False, figure_size=(10, 10)):
+def vat(data, return_odm=False, figure_size=(10, 10),euclidean=False):
     """VAT means Visual assesement of tendency. basically, it allow to asses cluster tendency
     through a map based on the dissimiliraty matrix.
 
@@ -49,8 +49,7 @@ def vat(data, return_odm=False, figure_size=(10, 10)):
         the ordered dissimalarity matrix plotted.
 
     """
-
-    (ordered_dissimilarity_matrix,reordering) = compute_ordered_dissimilarity_matrix(data)
+    (ordered_dissimilarity_matrix,reordering) = compute_ordered_dissimilarity_matrix(data,euclidean=euclidean)
 
     _, ax = plt.subplots(figsize=figure_size)
     ax.imshow(ordered_dissimilarity_matrix, cmap='gray', vmin=0, vmax=np.max(ordered_dissimilarity_matrix))
@@ -59,7 +58,7 @@ def vat(data, return_odm=False, figure_size=(10, 10)):
         return (ordered_dissimilarity_matrix,reordering)
 
 
-def compute_ordered_dissimilarity_matrix(X):
+def compute_ordered_dissimilarity_matrix(X,euclidean=False):
     """The ordered dissimilarity matrix is used by visual assesement of tendency. It is a just a a reordering
     of the dissimilarity matrix.
 
@@ -81,8 +80,12 @@ def compute_ordered_dissimilarity_matrix(X):
     # Step 1 :
 
     observation_path = []
+    if euclidean == False:
+        matrix_of_pairwise_distance = emd_pairwise_dissimilarity(X)
+    elif euclidean == True:
+        print("did this")
+        matrix_of_pairwise_distance = pairwise_distances(X)
 
-    matrix_of_pairwise_distance = emd_pairwise_dissimilarity(X)
     list_of_int = np.zeros(matrix_of_pairwise_distance.shape[0], dtype="int")
 
     index_of_maximum_value = np.argmax(matrix_of_pairwise_distance)
@@ -134,7 +137,7 @@ def compute_ordered_dissimilarity_matrix(X):
     return (ordered_matrix,reordering_matrix)
 
 
-def ivat(data, return_odm=False, figure_size=(10, 10)):
+def ivat(data, return_odm=False, figure_size=(10, 10),euclidean=False):
     """iVat return a visualisation based on the Vat but more reliable and easier to
     interpret.
 
@@ -160,7 +163,7 @@ def ivat(data, return_odm=False, figure_size=(10, 10)):
 
     """
 
-    ordered_matrix = compute_ivat_ordered_dissimilarity_matrix(data)
+    ordered_matrix = compute_ivat_ordered_dissimilarity_matrix(data,euclidean=euclidean)
 
     _, ax = plt.subplots(figsize=figure_size)
     ax.imshow(ordered_matrix, cmap='gray', vmin=0, vmax=np.max(ordered_matrix))
@@ -169,7 +172,7 @@ def ivat(data, return_odm=False, figure_size=(10, 10)):
         return ordered_matrix
 
 
-def compute_ivat_ordered_dissimilarity_matrix(X):
+def compute_ivat_ordered_dissimilarity_matrix(X,euclidean=False):
     """The ordered dissimilarity matrix is used by ivat. It is a just a a reordering
     of the dissimilarity matrix.
 
@@ -188,7 +191,7 @@ def compute_ivat_ordered_dissimilarity_matrix(X):
 
     """
 
-    (ordered_matrix,reordering) = compute_ordered_dissimilarity_matrix(X)
+    (ordered_matrix,reordering) = compute_ordered_dissimilarity_matrix(X,euclidean=euclidean)
     re_ordered_matrix = np.zeros((ordered_matrix.shape[0], ordered_matrix.shape[0]))
 
     for r in range(1, ordered_matrix.shape[0]):
@@ -210,6 +213,3 @@ def compute_ivat_ordered_dissimilarity_matrix(X):
 
     return re_ordered_matrix
 
-if __name__ == '__main__':
-    odm, reordering = vat(d,return_odm=True)
-    print(reordering[0,1])

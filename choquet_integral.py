@@ -187,7 +187,7 @@ class ChoquetIntegral:
         for i in range(n):
             initial.append(i+1)
 
-        index_permutations = itertools.permutations(initial,4)
+        index_permutations = itertools.permutations(initial,n)
         walks = np.ndarray((math.factorial(n),n),dtype=int)
         walk_diffs = np.ndarray((math.factorial(n),n),dtype=float)
         for i,val in enumerate(index_permutations):
