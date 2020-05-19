@@ -2,6 +2,7 @@ import numpy as np
 from sklearn.metrics import pairwise_distances
 import matplotlib.pyplot as plt
 import pyemd
+import tqdm
 
 def gen_unit_distance_matrix(n):
     distance_matrix = np.zeros((n,n))
@@ -83,7 +84,7 @@ def compute_ordered_dissimilarity_matrix(X,euclidean=False):
     if euclidean == False:
         matrix_of_pairwise_distance = emd_pairwise_dissimilarity(X)
     elif euclidean == True:
-        print("did this")
+        # print("did this")
         matrix_of_pairwise_distance = pairwise_distances(X)
 
     list_of_int = np.zeros(matrix_of_pairwise_distance.shape[0], dtype="int")
@@ -99,6 +100,8 @@ def compute_ordered_dissimilarity_matrix(X,euclidean=False):
     J = np.delete(K, column_index_of_maximum_value)
 
     # Step 2 :
+    print("starting step 2")
+    pbar = tqdm.tqdm(total=matrix_of_pairwise_distance.shape[0])
 
     for r in range(1, matrix_of_pairwise_distance.shape[0]):
 
@@ -119,18 +122,23 @@ def compute_ordered_dissimilarity_matrix(X,euclidean=False):
         ind_q = np.where(np.array(J) == q)[0][0]
 
         J = np.delete(J, ind_q)
+        pbar.update(1)
+    pbar.close()
 
     # Step 3
-
+    print("starting step 3")
     ordered_matrix = np.zeros(matrix_of_pairwise_distance.shape)
     reordering_matrix = np.zeros(matrix_of_pairwise_distance.shape,dtype=(int,2))
 
+    pbar = tqdm.tqdm(total= ordered_matrix.shape[0] * ordered_matrix.shape[1])
     for column_index_of_maximum_value in range(ordered_matrix.shape[0]):
         for j in range(ordered_matrix.shape[1]):
             ordered_matrix[column_index_of_maximum_value, j] = matrix_of_pairwise_distance[
                 list_of_int[column_index_of_maximum_value], list_of_int[j]]
 
             reordering_matrix[column_index_of_maximum_value,j] = (list_of_int[column_index_of_maximum_value],list_of_int[j])
+            pbar.update(1)
+    pbar.close()
 
     # Step 4 :
 
