@@ -224,7 +224,7 @@ if __name__ == '__main__':
 
 
     temp = walk_centric_shapley(chi.fm, data)
-    print(chi.fm)
+#     print(chi.fm)
 
     print('a')
 

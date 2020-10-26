@@ -2,6 +2,7 @@ import numpy as np
 import math
 import itertools
 from cvxopt import solvers, matrix
+import sys, os
 
 
 class ChoquetIntegral:
@@ -35,7 +36,7 @@ class ChoquetIntegral:
         self.trainLabels = l1
         self.N = self.trainSamples.shape[0]
         self.M = self.trainSamples.shape[1]
-        print("Number Inputs : ", self.N, "; Number Samples : ", self.M)
+#         print("Number Inputs : ", self.N, "; Number Samples : ", self.M)
         self.fm = self.produce_lattice()
 
         return self
@@ -87,8 +88,12 @@ class ChoquetIntegral:
             E = E + np.matmul(fm_coeff.reshape((fm_len, 1)), fm_coeff.reshape((1, fm_len)))
 
         G, h, A, b = self.build_constraint_matrices(index_keys, fm_len)
+        
+        originalout = sys.stdout
+        sys.stdout = open(os.devnull, 'w')
         sol = solvers.qp(matrix(2 * E, tc='d'), matrix(L.T, tc='d'), matrix(G, tc='d'), matrix(h, tc='d'),
                          matrix(A, tc='d'), matrix(b, tc='d'))
+        sys.stdout = originalout
 
         g = sol['x']
         Lattice = {}
@@ -202,6 +207,15 @@ class ChoquetIntegral:
 
             walk_diffs[i] = c_build
         return walk_diffs
+    
+#     def extract_los(self,walk):
+#         build = []
+#         for j in range(len(walk)):
+#             if j == 0:
+#                 build[j] = self.fm[walk[0:1]]
+#             else:
+#                 build[j] = self.fm[np.sort(walk[0:j+1])] - self.fm[walk[0:j]]
+              
 
 
 if __name__ == '__main__':
@@ -218,5 +232,5 @@ if __name__ == '__main__':
     chi.train_chi(data, labels)
 
     # print out the learned chi variables. (in this case, all 1's) 
-    print(chi.fm)
+#     print(chi.fm)
 
