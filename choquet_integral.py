@@ -36,7 +36,7 @@ class ChoquetIntegral:
         self.trainLabels = l1
         self.N = self.trainSamples.shape[0]
         self.M = self.trainSamples.shape[1]
-#         print("Number Inputs : ", self.N, "; Number Samples : ", self.M)
+        print("Number Inputs : ", self.N, "; Number Samples : ", self.M)
         self.fm = self.produce_lattice()
 
         return self

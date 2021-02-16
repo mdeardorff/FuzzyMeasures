@@ -84,7 +84,6 @@ def compute_ordered_dissimilarity_matrix(X,euclidean=False):
     if euclidean == False:
         matrix_of_pairwise_distance = emd_pairwise_dissimilarity(X)
     elif euclidean == True:
-        # print("did this")
         matrix_of_pairwise_distance = pairwise_distances(X)
 
     list_of_int = np.zeros(matrix_of_pairwise_distance.shape[0], dtype="int")
